@@ -19,7 +19,7 @@ namespace asseco_pfm.Database.Configuration
             builder.Property(x => x.Currency).HasMaxLength(3).IsRequired(true);
             builder.Property(x => x.Mcc).IsRequired(false);
             builder.Property(x => x.Kind).HasConversion<string>().IsRequired(true);
-            builder.Property(x => x.Catcode);
+            builder.Property(x => x.Catcode).HasMaxLength(3);
         }
     }
 }
