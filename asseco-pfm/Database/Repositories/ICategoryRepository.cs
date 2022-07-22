@@ -5,8 +5,10 @@ namespace asseco_pfm.Database.Repositories
     public interface ICategoryRepository
     {
         Task<Category> GetCategoryByCode(string Code);
-        Task<Category> AddCategory(Category Category);
+        Category AddCategory(Category Category);
         Task<Category> UpdateCategory(Category Category);
+        Task<List<Category>> GetAllCategories();
         void DeleteCategoryByCode(string Code);
+        bool IsCategoryExist(string Code);
     }
 }

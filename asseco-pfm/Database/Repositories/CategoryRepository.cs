@@ -12,12 +12,12 @@ namespace asseco_pfm.Database.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<Category> AddCategory(Category Category)
+        public Category AddCategory(Category Category)
         {
 
             _dbContext.Category.Add(Category);
 
-            await _dbContext.SaveChangesAsync();
+            _dbContext.SaveChanges();
 
             return Category;
         }
@@ -32,9 +32,19 @@ namespace asseco_pfm.Database.Repositories
             _dbContext.SaveChanges();
         }
 
+        public async Task<List<Category>> GetAllCategories()
+        {
+            return await _dbContext.Category.ToListAsync();
+        }
+
         public async Task<Category> GetCategoryByCode(string code)
         {
             return await _dbContext.Category.FirstOrDefaultAsync(c => c.Code.Equals(code));
+        }
+
+        public bool IsCategoryExist(string Code)
+        {
+            return _dbContext.Category.AsEnumerable().Any(c => c.Code.Equals(Code));
         }
 
         public async Task<Category> UpdateCategory(Category category)
