@@ -63,7 +63,7 @@ namespace asseco_pfm.Services
                         if (!_transactionRepository.IsTransactionExist(Id))
                         {
                             Transaction transactionToSave = new Transaction(Id, BeneficaryName, Date, Direction, Ammount, Description, Currency, Kind, Mcc);
-                            var t = _transactionRepository.AddTransaction(transactionToSave);
+                            var t = AddTransaction(transactionToSave);
                         }
                     }
                 }
