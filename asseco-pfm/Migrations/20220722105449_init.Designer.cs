@@ -12,8 +12,8 @@ using asseco_pfm.Database;
 namespace asseco_pfm.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220721130754_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20220722105449_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -58,7 +58,8 @@ namespace asseco_pfm.Migrations
                         .HasColumnType("character varying(40)");
 
                     b.Property<string>("Catcode")
-                        .HasColumnType("text");
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
 
                     b.Property<string>("Currency")
                         .IsRequired()
@@ -86,7 +87,18 @@ namespace asseco_pfm.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Catcode");
+
                     b.ToTable("transaction", (string)null);
+                });
+
+            modelBuilder.Entity("asseco_pfm.Models.Transaction", b =>
+                {
+                    b.HasOne("asseco_pfm.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("Catcode");
+
+                    b.Navigation("Category");
                 });
 #pragma warning restore 612, 618
         }

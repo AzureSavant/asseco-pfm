@@ -9,6 +9,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+asseco-pfm/appsettings.Development.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

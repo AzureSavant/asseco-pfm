@@ -12,11 +12,11 @@ namespace asseco_pfm.Database.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<Transaction> AddTransaction(Transaction Transaction)
+        public  Transaction AddTransaction(Transaction Transaction)
         {
-            _dbContext.Transaction.Add(Transaction);
+             var transaction = _dbContext.Transaction.Add(Transaction);
 
-            await _dbContext.SaveChangesAsync();
+             _dbContext.SaveChanges();
 
             return Transaction;
         }
@@ -33,7 +33,18 @@ namespace asseco_pfm.Database.Repositories
 
         public async Task<Transaction> GetTransactionById(int Id)
         {
+
             return await _dbContext.Transaction.FirstOrDefaultAsync(x => x.Id.Equals(Id));
+        }
+
+        public async Task<List<Transaction>> GetTransactions()
+        {
+            return await _dbContext.Transaction.ToListAsync();
+        }
+
+        public  bool IsTransactionExist(int Id)
+        {
+            return _dbContext.Transaction.AsEnumerable().Any(t => t.Id.Equals(Id));
         }
 
         public Task<Transaction> UpdateTransaction(Transaction TransactionEntity)

@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace asseco_pfm.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -37,21 +37,31 @@ namespace asseco_pfm.Migrations
                     Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     Mcc = table.Column<int>(type: "integer", nullable: true),
                     Kind = table.Column<string>(type: "text", nullable: false),
-                    Catcode = table.Column<string>(type: "text", nullable: true)
+                    Catcode = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_transaction", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_transaction_category_Catcode",
+                        column: x => x.Catcode,
+                        principalTable: "category",
+                        principalColumn: "Code");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_transaction_Catcode",
+                table: "transaction",
+                column: "Catcode");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "category");
+                name: "transaction");
 
             migrationBuilder.DropTable(
-                name: "transaction");
+                name: "category");
         }
     }
 }
