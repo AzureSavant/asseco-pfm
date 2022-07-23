@@ -18,6 +18,7 @@ namespace asseco_pfm
 
             // Add services to the container.
             builder.Services.AddScoped<ITransactionService, TransactionService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddControllers();
