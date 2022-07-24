@@ -1,4 +1,5 @@
-﻿using asseco_pfm.Models;
+﻿using asseco_pfm.DTO;
+using asseco_pfm.Models;
 using asseco_pfm.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -52,9 +53,9 @@ namespace asseco_pfm.Controllers
 
         [HttpPost]
         [Route("{id}/categorize")]
-        public async Task<IActionResult> TransactionsCategorize([FromRoute][Required] int id, [FromBody] string catCode)
+        public async Task<IActionResult> TransactionsCategorize([FromRoute][Required] int id, [FromBody] CatCodeDto catCodeDto)
         {
-            var result = await _transactionService.CategorizeTransaction(id, catCode);
+            var result = await _transactionService.CategorizeTransaction(id, catCodeDto.CatCode );
 
             if(result == null)
             {

@@ -9,10 +9,12 @@ namespace asseco_pfm.Services
 
     {
         private readonly ITransactionRepository _transactionRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public TransactionService(ITransactionRepository transactionRepository)
+        public TransactionService(ITransactionRepository transactionRepository, ICategoryRepository categoryRepository)
         {
             _transactionRepository = transactionRepository;
+            _categoryRepository = categoryRepository;
         }
 
 
@@ -22,16 +24,29 @@ namespace asseco_pfm.Services
             
         }
 
-        public Transaction CategorizeTransaction(int id, string catCode)
+        public async Task<Transaction> CategorizeTransaction(int id, string catCode)
         {
-            throw new NotImplementedException();
+            if(_transactionRepository.IsTransactionExist(id) && _categoryRepository.IsCategoryExist(catCode))
+            {
+                var fetchedTransaction = await _transactionRepository.GetTransactionById(id);
+                var fetchedCategory = await _categoryRepository.GetCategoryByCode(catCode);
+
+                fetchedTransaction.Catcode = catCode;
+                fetchedTransaction.Category = fetchedCategory;
+
+                var updatedTransaction = _transactionRepository.UpdateTransaction(fetchedTransaction);
+
+                return updatedTransaction;
+            }
+
+            return null;
         }
 
         public async Task<List<Transaction>> GetTransactions()
         {
             return await _transactionRepository.GetTransactions();
         }
-
+       
         public  void ImportFile(IFormFile file)
         {
             if (file.FileName.EndsWith(".csv"))

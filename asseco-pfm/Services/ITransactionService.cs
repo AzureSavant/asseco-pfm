@@ -9,6 +9,6 @@ namespace asseco_pfm.Services
         Task<List<Transaction>> GetTransactions();
         Transaction AddTransaction(Transaction transaction);
         void ImportFile(IFormFile file);
-        Transaction CategorizeTransaction(int id, string catCode);
+        Task<Transaction> CategorizeTransaction(int id, string catCode);
     }
 }
