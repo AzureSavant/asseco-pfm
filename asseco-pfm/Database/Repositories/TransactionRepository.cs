@@ -47,9 +47,11 @@ namespace asseco_pfm.Database.Repositories
             return _dbContext.Transaction.AsEnumerable().Any(t => t.Id.Equals(Id));
         }
 
-        public Task<Transaction> UpdateTransaction(Transaction TransactionEntity)
+        public Transaction UpdateTransaction(Transaction Transaction)
         {
-            throw new NotImplementedException();
+            _dbContext.Transaction.Update(Transaction);
+            _dbContext.SaveChanges();
+            return Transaction;
         }
     }
 }

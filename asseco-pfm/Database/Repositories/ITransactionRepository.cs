@@ -6,7 +6,7 @@ namespace asseco_pfm.Database.Repositories
     {
         Task<Transaction> GetTransactionById(int Id);
         Transaction AddTransaction(Transaction Transaction);
-        Task<Transaction> UpdateTransaction(Transaction TransactionEntity);
+        Transaction UpdateTransaction(Transaction Transaction);
         void DeleteTransactionById(int Id);
         Task<List<Transaction>> GetTransactions();
         bool IsTransactionExist(int Id);

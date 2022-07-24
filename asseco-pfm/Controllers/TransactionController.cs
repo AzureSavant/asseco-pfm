@@ -52,13 +52,13 @@ namespace asseco_pfm.Controllers
 
         [HttpPost]
         [Route("{id}/categorize")]
-        public  IActionResult TransactionsCategorize([FromRoute][Required] int id, [FromBody] String catCode)
+        public async Task<IActionResult> TransactionsCategorize([FromRoute][Required] int id, [FromBody] string catCode)
         {
-            var result = _transactionService.CategorizeTransaction(id, catCode);
+            var result = await _transactionService.CategorizeTransaction(id, catCode);
 
             if(result == null)
             {
-                return BadRequest("Couldn't Categorize");
+                return BadRequest("x-asee-problems: List [ \"provided - category - does - not - exists\" ]");
             }
 
             return Ok(result);
