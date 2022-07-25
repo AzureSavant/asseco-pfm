@@ -8,6 +8,7 @@ namespace asseco_pfm.Database
     {
         public DbSet<Transaction> Transaction { get; set; }
         public DbSet<Category> Category { get; set; }
+        public DbSet<TransactionSplitSingle> TransactionSplitSingle { get; set; }
 
         public AppDbContext()
         {
