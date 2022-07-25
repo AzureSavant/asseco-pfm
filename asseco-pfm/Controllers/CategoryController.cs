@@ -20,8 +20,6 @@ namespace asseco_pfm.Controllers
         public IActionResult ImportCategories(IFormFile file)
         {
 
-            if (file == null) return BadRequest("Missing File");
-
             _categoryService.ImportFile(file);
 
             return Ok("Imported");

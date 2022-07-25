@@ -1,5 +1,4 @@
-﻿using asseco_pfm.DTO;
-using asseco_pfm.Models;
+﻿using asseco_pfm.Commands;
 using asseco_pfm.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -21,31 +20,33 @@ namespace asseco_pfm.Controllers
         [Route("import")]
         public IActionResult ImportFile(IFormFile file)
         {
-            if (file == null) return BadRequest("Missing File");
-
             _transactionService.ImportFile(file);
 
             return Ok("Imported");
         }
-
-
 
         [HttpGet]
         public async Task<IActionResult> GetTransactions()
         {
             var transactionList = await _transactionService.GetTransactions();
 
-            if (transactionList == null)
-                return BadRequest("No Transactions Found");
+            return Ok(transactionList);
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetTransaction([FromRoute] int id)
+        {
+            var transactionList = await _transactionService.GetTransaction(id);
 
             return Ok(transactionList);
         }
 
         [HttpPost]
         [Route("{id}/categorize")]
-        public async Task<IActionResult> TransactionsCategorize([FromRoute][Required] int id, [FromBody] CatCodeDto catCodeDto)
+        public async Task<IActionResult> TransactionsCategorize([FromRoute][Required] int id, [FromBody] CatCodeCommand catCodeCommand)
         {
-            var result = await _transactionService.CategorizeTransaction(id, catCodeDto);
+            var result = await _transactionService.CategorizeTransaction(id, catCodeCommand);
 
             if (result == null)
             {
@@ -57,13 +58,13 @@ namespace asseco_pfm.Controllers
 
         [HttpPost]
         [Route("{id}/split")]
-        public async Task<IActionResult> TransactionsSplit([FromRoute][Required] int id, [FromBody] TransactionSplitDto splits)
+        public async Task<IActionResult> TransactionsSplit([FromRoute][Required] int id, [FromBody] TransactionSplitCommand splits)
         {
             var result = await _transactionService.TransactionsSplit(id, splits);
 
             if (result == null)
             {
-                return BadRequest("x-asee-problems: List [ \"provided - category - does - not - exists\" ]");
+                return BadRequest();
             }
 
             return Ok(result);
