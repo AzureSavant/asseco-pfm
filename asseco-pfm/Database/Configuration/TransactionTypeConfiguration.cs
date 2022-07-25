@@ -14,7 +14,7 @@ namespace asseco_pfm.Database.Configuration
             builder.Property(x => x.BeneficaryName).HasMaxLength(40);
             builder.Property(x => x.Date).IsRequired(true);
             builder.Property(x => x.Direction).HasConversion<string>().IsRequired(true);
-            builder.Property(x => x.Ammount).IsRequired(true);
+            builder.Property(x => x.Amount).IsRequired(true);
             builder.Property(x => x.Description).HasMaxLength(100);
             builder.Property(x => x.Currency).HasMaxLength(3).IsRequired(true);
             builder.Property(x => x.Mcc).IsRequired(false);
