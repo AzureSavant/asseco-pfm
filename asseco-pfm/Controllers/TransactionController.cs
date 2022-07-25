@@ -28,24 +28,14 @@ namespace asseco_pfm.Controllers
             return Ok("Imported");
         }
 
-        [HttpPost]
-        public  IActionResult AddTransaction([FromBody] Transaction transaction)
-        {
-            var result =  _transactionService.AddTransaction(transaction);
-            if(result == null)
-            {
-                return BadRequest();
-            }
 
-            return Ok(result);
-        }
 
         [HttpGet]
         public async Task<IActionResult> GetTransactions()
         {
             var transactionList = await _transactionService.GetTransactions();
 
-            if (transactionList == null) 
+            if (transactionList == null)
                 return BadRequest("No Transactions Found");
 
             return Ok(transactionList);
@@ -55,9 +45,23 @@ namespace asseco_pfm.Controllers
         [Route("{id}/categorize")]
         public async Task<IActionResult> TransactionsCategorize([FromRoute][Required] int id, [FromBody] CatCodeDto catCodeDto)
         {
-            var result = await _transactionService.CategorizeTransaction(id, catCodeDto.CatCode );
+            var result = await _transactionService.CategorizeTransaction(id, catCodeDto);
 
-            if(result == null)
+            if (result == null)
+            {
+                return BadRequest("x-asee-problems: List [ \"provided - category - does - not - exists\" ]");
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost]
+        [Route("{id}/split")]
+        public async Task<IActionResult> TransactionsSplit([FromRoute][Required] int id, [FromBody] TransactionSplitDto splits)
+        {
+            var result = await _transactionService.TransactionsSplit(id, splits);
+
+            if (result == null)
             {
                 return BadRequest("x-asee-problems: List [ \"provided - category - does - not - exists\" ]");
             }

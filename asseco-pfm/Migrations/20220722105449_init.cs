@@ -32,7 +32,7 @@ namespace asseco_pfm.Migrations
                     BeneficaryName = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: true),
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Direction = table.Column<string>(type: "text", nullable: false),
-                    Ammount = table.Column<decimal>(type: "numeric", nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
                     Description = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     Mcc = table.Column<int>(type: "integer", nullable: true),
