@@ -34,7 +34,7 @@ namespace asseco_pfm.Database.Repositories
         public async Task<Transaction> GetTransactionById(int Id)
         {
 
-            return await _dbContext.Transaction.FirstOrDefaultAsync(x => x.Id.Equals(Id));
+            return await _dbContext.Transaction.FirstAsync(x => x.Id.Equals(Id));
         }
 
         public async Task<List<Transaction>> GetTransactions()

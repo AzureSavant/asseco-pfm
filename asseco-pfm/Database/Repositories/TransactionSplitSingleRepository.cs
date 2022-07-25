@@ -26,5 +26,13 @@ namespace asseco_pfm.Database.Repositories
             _dbContext.SaveChanges();
             return transactionSplit;
         }
+
+        public List<TransactionSplitSingle> FindAllByTransactionId(int transactionId)
+        {
+            var listTransactions = _dbContext.TransactionSplitSingle.Where(E => E.TransactionId.Equals(transactionId)).ToList();
+
+            return listTransactions;
+        }
+
     }
 }

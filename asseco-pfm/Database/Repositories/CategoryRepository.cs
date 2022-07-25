@@ -39,7 +39,7 @@ namespace asseco_pfm.Database.Repositories
 
         public async Task<Category> GetCategoryByCode(string code)
         {
-            return await _dbContext.Category.FirstOrDefaultAsync(c => c.Code.Equals(code));
+            return await _dbContext.Category.FirstAsync(c => c.Code.Equals(code));
         }
 
         public bool IsCategoryExist(string Code)
