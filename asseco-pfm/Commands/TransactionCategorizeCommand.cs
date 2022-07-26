@@ -2,7 +2,7 @@
 
 namespace asseco_pfm.Commands
 {
-    public class CatCodeCommand
+    public class TransactionCategorizeCommand
     {
         [DataMember(Name = "catCode")]
         public string CatCode { get; set; }

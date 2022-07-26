@@ -28,17 +28,17 @@ namespace asseco_pfm.Services
             
         }
 
-        public async Task<Transaction> CategorizeTransaction(int id, CatCodeCommand catCodeCommand)
+        public async Task<Transaction> CategorizeTransaction(int id, TransactionCategorizeCommand transactionCategorizeCommand)
         {
-            if(!_transactionRepository.IsTransactionExist(id) || !_categoryRepository.IsCategoryExist(catCodeCommand.CatCode))
+            if(!_transactionRepository.IsTransactionExist(id) || !_categoryRepository.IsCategoryExist(transactionCategorizeCommand.CatCode))
             {
                 return null;
             }
 
             var fetchedTransaction = await GetTransaction(id);
-            var fetchedCategory = await _categoryRepository.GetCategoryByCode(catCodeCommand.CatCode);
+            var fetchedCategory = await _categoryRepository.GetCategoryByCode(transactionCategorizeCommand.CatCode);
 
-            fetchedTransaction.Catcode = catCodeCommand.CatCode;
+            fetchedTransaction.Catcode = transactionCategorizeCommand.CatCode;
             fetchedTransaction.Category = fetchedCategory;
 
             var updatedTransaction = _transactionRepository.UpdateTransaction(fetchedTransaction);

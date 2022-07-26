@@ -26,7 +26,7 @@ namespace asseco_pfm.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTransactions()
+        public async Task<IActionResult> GetTransactions([FromQuery] string transactionKind, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] int? page, [FromQuery] int? pageSize, [FromQuery] string sortBy, [FromQuery] SortOrderEnum sortOrder)
         {
             var transactionList = await _transactionService.GetTransactions();
 
@@ -44,9 +44,9 @@ namespace asseco_pfm.Controllers
 
         [HttpPost]
         [Route("{id}/categorize")]
-        public async Task<IActionResult> TransactionsCategorize([FromRoute][Required] int id, [FromBody] CatCodeCommand catCodeCommand)
+        public async Task<IActionResult> TransactionsCategorize([FromRoute][Required] int id, [FromBody] TransactionCategorizeCommand transactionCategorizeCommand)
         {
-            var result = await _transactionService.CategorizeTransaction(id, catCodeCommand);
+            var result = await _transactionService.CategorizeTransaction(id, transactionCategorizeCommand);
 
             if (result == null)
             {
