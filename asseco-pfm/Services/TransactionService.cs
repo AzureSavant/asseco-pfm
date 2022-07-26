@@ -1,4 +1,6 @@
-﻿using asseco_pfm.Database.Repositories;
+﻿using asseco_pfm.Commands;
+using asseco_pfm.Database.Repositories;
+using asseco_pfm.DTO;
 using asseco_pfm.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
@@ -10,11 +12,13 @@ namespace asseco_pfm.Services
     {
         private readonly ITransactionRepository _transactionRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ITransactionSplitSingleRepository _transactionSplitSingleRepository;
 
-        public TransactionService(ITransactionRepository transactionRepository, ICategoryRepository categoryRepository)
+        public TransactionService(ITransactionRepository transactionRepository, ICategoryRepository categoryRepository, ITransactionSplitSingleRepository transactionSplitSingleRepository)
         {
             _transactionRepository = transactionRepository;
             _categoryRepository = categoryRepository;
+            _transactionSplitSingleRepository = transactionSplitSingleRepository;
         }
 
 
@@ -24,22 +28,27 @@ namespace asseco_pfm.Services
             
         }
 
-        public async Task<Transaction> CategorizeTransaction(int id, string catCode)
+        public async Task<Transaction> CategorizeTransaction(int id, CatCodeCommand catCodeCommand)
         {
-            if(_transactionRepository.IsTransactionExist(id) && _categoryRepository.IsCategoryExist(catCode))
+            if(!_transactionRepository.IsTransactionExist(id) || !_categoryRepository.IsCategoryExist(catCodeCommand.CatCode))
             {
-                var fetchedTransaction = await _transactionRepository.GetTransactionById(id);
-                var fetchedCategory = await _categoryRepository.GetCategoryByCode(catCode);
-
-                fetchedTransaction.Catcode = catCode;
-                fetchedTransaction.Category = fetchedCategory;
-
-                var updatedTransaction = _transactionRepository.UpdateTransaction(fetchedTransaction);
-
-                return updatedTransaction;
+                return null;
             }
 
-            return null;
+            var fetchedTransaction = await GetTransaction(id);
+            var fetchedCategory = await _categoryRepository.GetCategoryByCode(catCodeCommand.CatCode);
+
+            fetchedTransaction.Catcode = catCodeCommand.CatCode;
+            fetchedTransaction.Category = fetchedCategory;
+
+            var updatedTransaction = _transactionRepository.UpdateTransaction(fetchedTransaction);
+
+            return updatedTransaction;
+        }
+
+        public async Task<Transaction> GetTransaction(int id)
+        {
+            return await _transactionRepository.GetTransactionById(id);
         }
 
         public async Task<List<Transaction>> GetTransactions()
@@ -64,25 +73,75 @@ namespace asseco_pfm.Services
                         DateTime Date = DateTime.Parse(parsedRow[2]);
                         TransactionDirectionEnum Direction = (TransactionDirectionEnum)Enum.Parse(typeof(TransactionDirectionEnum), parsedRow[3]);
                         parsedRow[4] = parsedRow[4].Replace("\"", ""); //remove "" from string
-                        decimal Ammount = Convert.ToDecimal(parsedRow[4]);
+                        decimal Amount = Convert.ToDecimal(parsedRow[4]);
                         string Description = parsedRow[5];
                         string Currency = parsedRow[6];
-                        int? Mcc;
-                        if (string.IsNullOrEmpty(parsedRow[7])){
-                            Mcc = null;
-                        }
-                        else
-                            Mcc = int.Parse(parsedRow[7]);
+                        int? Mcc = string.IsNullOrEmpty(parsedRow[7]) ? null : int.Parse(parsedRow[7]);
                         TransactionKindEnum Kind = (TransactionKindEnum)Enum.Parse(typeof(TransactionKindEnum), parsedRow[8]);
 
                         if (!_transactionRepository.IsTransactionExist(Id))
                         {
-                            Transaction transactionToSave = new Transaction(Id, BeneficaryName, Date, Direction, Ammount, Description, Currency, Kind, Mcc);
+                            Transaction transactionToSave = new Transaction(Id, BeneficaryName, Date, Direction, Amount, Description, Currency, Kind, Mcc);
                             var t = AddTransaction(transactionToSave);
                         }
                     }
                 }
             }
         }
+
+        public async Task<Transaction> TransactionsSplit(int id, TransactionSplitCommand splits)
+        {
+            if (!_transactionRepository.IsTransactionExist(id)) 
+            {
+                return null;
+            }
+
+            var transaction = await GetTransaction(id);
+
+            if (!IsSplitValid(splits, transaction.Amount))
+            {
+                return null;
+            }
+
+            var splitListToRemove = _transactionSplitSingleRepository.FindAllByTransactionId(transaction.Id);
+            transaction.Splits = new List<TransactionSplitSingle>();
+
+            if (splitListToRemove.Any())
+            {
+                splitListToRemove.ForEach(S => _transactionSplitSingleRepository.DeleteTransactionSplitSingle(S));
+            }
+
+            foreach (var transactionSplit in splits.Splits)
+            {
+                var category = await _categoryRepository.GetCategoryByCode(transactionSplit.CatCode);
+                TransactionSplitSingle splitToSave = new TransactionSplitSingle(catCode: category.Code, amount: transactionSplit.Amount, trainsactionId: transaction.Id);
+                transaction.Splits.Add(splitToSave);
+            }
+
+            var updatedTransaction = _transactionRepository.UpdateTransaction(transaction);
+
+            return updatedTransaction;
+        }
+
+        public bool IsSplitValid(TransactionSplitCommand split,decimal amount) 
+        {
+            decimal sum = 0;
+            foreach (var transactionSplit in split.Splits)
+            {
+                sum = Decimal.Add(sum, transactionSplit.Amount);
+                if (!_categoryRepository.IsCategoryExist(transactionSplit.CatCode))
+                {
+                    return false;
+                }
+            }
+
+            return IsSplitAmmountValid(amount,sum);
+        }
+
+        public bool IsSplitAmmountValid(decimal amount, decimal splitAmount)
+        {
+            return amount >= splitAmount;
+        }
+
     }
 }
