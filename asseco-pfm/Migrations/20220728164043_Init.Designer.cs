@@ -12,8 +12,8 @@ using asseco_pfm.Database;
 namespace asseco_pfm.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220725100651_TransactionSplit")]
-    partial class TransactionSplit
+    [Migration("20220728164043_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,11 +33,16 @@ namespace asseco_pfm.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("ParentCategoryC")
+                        .HasColumnType("text");
+
                     b.Property<string>("ParentCode")
                         .HasMaxLength(2)
                         .HasColumnType("character varying(2)");
 
                     b.HasKey("Code");
+
+                    b.HasIndex("ParentCode");
 
                     b.ToTable("category", (string)null);
                 });
@@ -108,7 +113,7 @@ namespace asseco_pfm.Migrations
                         .HasMaxLength(3)
                         .HasColumnType("character varying(3)");
 
-                    b.Property<int?>("TransactionId")
+                    b.Property<int>("TransactionId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -116,6 +121,15 @@ namespace asseco_pfm.Migrations
                     b.HasIndex("TransactionId");
 
                     b.ToTable("transactionsplit", (string)null);
+                });
+
+            modelBuilder.Entity("asseco_pfm.Models.Category", b =>
+                {
+                    b.HasOne("asseco_pfm.Models.Category", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentCode");
+
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("asseco_pfm.Models.Transaction", b =>
@@ -129,9 +143,13 @@ namespace asseco_pfm.Migrations
 
             modelBuilder.Entity("asseco_pfm.Models.TransactionSplitSingle", b =>
                 {
-                    b.HasOne("asseco_pfm.Models.Transaction", null)
+                    b.HasOne("asseco_pfm.Models.Transaction", "Transaction")
                         .WithMany("Splits")
-                        .HasForeignKey("TransactionId");
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Transaction");
                 });
 
             modelBuilder.Entity("asseco_pfm.Models.Transaction", b =>

@@ -12,10 +12,20 @@ namespace asseco_pfm.Database.Repositories
             _dbContext = dbContext;
         }
 
-        public Category AddCategory(Category Category)
+        public  Category AddCategory(Category Category)
         {
 
-            _dbContext.Category.Add(Category);
+
+            if (!string.IsNullOrEmpty(Category.ParentCode) && IsCategoryExist(Category.ParentCode))
+            {
+                var parentCategory =  GetCategoryByCode(Category.ParentCode);
+                Category.Parent = parentCategory;
+                var category = _dbContext.Category.Add(Category);
+            }
+            else
+            {
+                var category = _dbContext.Category.Add(Category);
+            }
 
             _dbContext.SaveChanges();
 
@@ -24,7 +34,7 @@ namespace asseco_pfm.Database.Repositories
 
         public void DeleteCategoryByCode(string Code)
         {
-            var category = GetCategoryByCode(Code);
+            var category = GetCategoryByCodeAsync(Code);
             if (category == null)
                 return;
 
@@ -37,9 +47,14 @@ namespace asseco_pfm.Database.Repositories
             return await _dbContext.Category.ToListAsync();
         }
 
-        public async Task<Category> GetCategoryByCode(string code)
+        public Category GetCategoryByCode(string Code)
         {
-            return await _dbContext.Category.FirstAsync(c => c.Code.Equals(code));
+            return _dbContext.Category.First(c => c.Code.Equals(Code));
+        }
+
+        public async Task<Category> GetCategoryByCodeAsync(string Code)
+        {
+            return await _dbContext.Category.FirstAsync(c => c.Code.Equals(Code));
         }
 
         public bool IsCategoryExist(string Code)
@@ -47,9 +62,12 @@ namespace asseco_pfm.Database.Repositories
             return _dbContext.Category.AsEnumerable().Any(c => c.Code.Equals(Code));
         }
 
-        public async Task<Category> UpdateCategory(Category category)
+        public  Category UpdateCategory(Category Category)
         {
-            throw new NotImplementedException();
+            var category =  _dbContext.Category.Update(Category);
+            _dbContext.SaveChanges();
+            return Category;
+
         }
     }
 }

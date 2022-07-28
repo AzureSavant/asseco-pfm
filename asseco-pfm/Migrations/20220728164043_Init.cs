@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace asseco_pfm.Migrations
 {
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,11 +16,17 @@ namespace asseco_pfm.Migrations
                 {
                     Code = table.Column<string>(type: "text", nullable: false),
                     ParentCode = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: true),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    ParentCategoryC = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_category", x => x.Code);
+                    table.ForeignKey(
+                        name: "FK_category_category_ParentCode",
+                        column: x => x.ParentCode,
+                        principalTable: "category",
+                        principalColumn: "Code");
                 });
 
             migrationBuilder.CreateTable(
@@ -49,14 +55,48 @@ namespace asseco_pfm.Migrations
                         principalColumn: "Code");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "transactionsplit",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CatCode = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    TransactionId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_transactionsplit", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_transactionsplit_transaction_TransactionId",
+                        column: x => x.TransactionId,
+                        principalTable: "transaction",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_category_ParentCode",
+                table: "category",
+                column: "ParentCode");
+
             migrationBuilder.CreateIndex(
                 name: "IX_transaction_Catcode",
                 table: "transaction",
                 column: "Catcode");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_transactionsplit_TransactionId",
+                table: "transactionsplit",
+                column: "TransactionId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "transactionsplit");
+
             migrationBuilder.DropTable(
                 name: "transaction");
 

@@ -31,11 +31,16 @@ namespace asseco_pfm.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("ParentCategory")
+                        .HasColumnType("text");
+
                     b.Property<string>("ParentCode")
                         .HasMaxLength(2)
                         .HasColumnType("character varying(2)");
 
                     b.HasKey("Code");
+
+                    b.HasIndex("ParentCategory");
 
                     b.ToTable("category", (string)null);
                 });
@@ -114,6 +119,15 @@ namespace asseco_pfm.Migrations
                     b.HasIndex("TransactionId");
 
                     b.ToTable("transactionsplit", (string)null);
+                });
+
+            modelBuilder.Entity("asseco_pfm.Models.Category", b =>
+                {
+                    b.HasOne("asseco_pfm.Models.Category", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentCategory");
+
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("asseco_pfm.Models.Transaction", b =>

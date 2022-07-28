@@ -12,8 +12,8 @@ using asseco_pfm.Database;
 namespace asseco_pfm.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220725200757_linkTransactionSplitTransaction")]
-    partial class linkTransactionSplitTransaction
+    [Migration("20220728164524_SubCategoryImpl")]
+    partial class SubCategoryImpl
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,11 +33,16 @@ namespace asseco_pfm.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("ParentCategory")
+                        .HasColumnType("text");
+
                     b.Property<string>("ParentCode")
                         .HasMaxLength(2)
                         .HasColumnType("character varying(2)");
 
                     b.HasKey("Code");
+
+                    b.HasIndex("ParentCode");
 
                     b.ToTable("category", (string)null);
                 });
@@ -116,6 +121,15 @@ namespace asseco_pfm.Migrations
                     b.HasIndex("TransactionId");
 
                     b.ToTable("transactionsplit", (string)null);
+                });
+
+            modelBuilder.Entity("asseco_pfm.Models.Category", b =>
+                {
+                    b.HasOne("asseco_pfm.Models.Category", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentCode");
+
+                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("asseco_pfm.Models.Transaction", b =>

@@ -12,8 +12,8 @@ using asseco_pfm.Database;
 namespace asseco_pfm.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220722105449_init")]
-    partial class init
+    [Migration("20220728164749_SubCategoryFKChange")]
+    partial class SubCategoryFKChange
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,11 +33,16 @@ namespace asseco_pfm.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("ParentCategory")
+                        .HasColumnType("text");
+
                     b.Property<string>("ParentCode")
                         .HasMaxLength(2)
                         .HasColumnType("character varying(2)");
 
                     b.HasKey("Code");
+
+                    b.HasIndex("ParentCategory");
 
                     b.ToTable("category", (string)null);
                 });
@@ -92,6 +97,41 @@ namespace asseco_pfm.Migrations
                     b.ToTable("transaction", (string)null);
                 });
 
+            modelBuilder.Entity("asseco_pfm.Models.TransactionSplitSingle", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("CatCode")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<int>("TransactionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("transactionsplit", (string)null);
+                });
+
+            modelBuilder.Entity("asseco_pfm.Models.Category", b =>
+                {
+                    b.HasOne("asseco_pfm.Models.Category", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentCategory");
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("asseco_pfm.Models.Transaction", b =>
                 {
                     b.HasOne("asseco_pfm.Models.Category", "Category")
@@ -99,6 +139,22 @@ namespace asseco_pfm.Migrations
                         .HasForeignKey("Catcode");
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("asseco_pfm.Models.TransactionSplitSingle", b =>
+                {
+                    b.HasOne("asseco_pfm.Models.Transaction", "Transaction")
+                        .WithMany("Splits")
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Transaction");
+                });
+
+            modelBuilder.Entity("asseco_pfm.Models.Transaction", b =>
+                {
+                    b.Navigation("Splits");
                 });
 #pragma warning restore 612, 618
         }
