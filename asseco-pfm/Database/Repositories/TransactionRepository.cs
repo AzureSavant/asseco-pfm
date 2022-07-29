@@ -41,11 +41,15 @@ namespace asseco_pfm.Database.Repositories
             return await _dbContext.Transaction.ToListAsync();
         }
 
+        public List<Transaction> GetTransactionsFromCustomQuery(string Query)
+        {
+            return _dbContext.Transaction.FromSqlRaw(Query).ToList();
+        }
+
         public List<Transaction> GetTransactionsWithCategoriesAndSplits(string Query)
         {
-            return _dbContext.Transaction.FromSqlRaw(Query.ToString()).Include(t => t.Category).Include(t => t.Splits).ToList();
-            //return _dbContext.Transaction.FromSqlInterpolated(Query).Include(t => t.Category).Include(t => t.Splits).ToList();
-            //return _dbContext.Transaction.Include(t=> t.Category).Include(t=> t.Splits).ToList();
+            return _dbContext.Transaction.FromSqlRaw(Query).Include(t => t.Category).Include(t => t.Splits).ToList();
+            
         }
 
         public  bool IsTransactionExist(int Id)

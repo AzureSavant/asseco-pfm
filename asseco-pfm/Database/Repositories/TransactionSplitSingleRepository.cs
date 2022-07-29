@@ -1,4 +1,5 @@
 ﻿using asseco_pfm.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace asseco_pfm.Database.Repositories
 {
@@ -33,5 +34,9 @@ namespace asseco_pfm.Database.Repositories
             return listTransactions;
         }
 
+        public List<TransactionSplitSingle> GetTransactionSplitSinglesFromQuery(string query)
+        {
+            return _dbContext.TransactionSplitSingle.FromSqlRaw(query).ToList();
+        }
     }
 }

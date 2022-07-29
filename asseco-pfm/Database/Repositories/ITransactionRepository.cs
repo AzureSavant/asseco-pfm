@@ -11,6 +11,7 @@ namespace asseco_pfm.Database.Repositories
         Task<List<Transaction>> GetTransactions();
         bool IsTransactionExist(int Id);
         List<Transaction> GetTransactionsWithCategoriesAndSplits(string Query);
+        List<Transaction> GetTransactionsFromCustomQuery(string Query);
         
     }
 }
