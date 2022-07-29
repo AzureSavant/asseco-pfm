@@ -33,13 +33,17 @@ namespace asseco_pfm.Database.Repositories
 
         public async Task<Transaction> GetTransactionById(int Id)
         {
-
             return await _dbContext.Transaction.FirstAsync(x => x.Id.Equals(Id));
         }
 
         public async Task<List<Transaction>> GetTransactions()
         {
             return await _dbContext.Transaction.ToListAsync();
+        }
+
+        public async Task<List<Transaction>> GetTransactionsWithCategoriesAndSplits()
+        {
+            return await _dbContext.Transaction.Include(t=> t.Category).Include(t=> t.Splits).ToListAsync();
         }
 
         public  bool IsTransactionExist(int Id)

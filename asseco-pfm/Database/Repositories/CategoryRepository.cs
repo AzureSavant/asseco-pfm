@@ -14,8 +14,6 @@ namespace asseco_pfm.Database.Repositories
 
         public  Category AddCategory(Category Category)
         {
-
-
             if (!string.IsNullOrEmpty(Category.ParentCode) && IsCategoryExist(Category.ParentCode))
             {
                 var parentCategory =  GetCategoryByCode(Category.ParentCode);
@@ -67,7 +65,6 @@ namespace asseco_pfm.Database.Repositories
             var category =  _dbContext.Category.Update(Category);
             _dbContext.SaveChanges();
             return Category;
-
         }
     }
 }

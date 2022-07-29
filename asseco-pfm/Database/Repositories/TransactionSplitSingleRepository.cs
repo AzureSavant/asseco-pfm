@@ -13,7 +13,6 @@ namespace asseco_pfm.Database.Repositories
 
         public TransactionSplitSingle AddTransactionSplitSingle(TransactionSplitSingle transactionSplit)
         {
-
             var transactionSplitSingle = _dbContext.TransactionSplitSingle.Add(transactionSplit);
             _dbContext.SaveChanges();
             return transactionSplit;

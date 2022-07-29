@@ -36,7 +36,7 @@ namespace asseco_pfm.Services
             }
 
             var fetchedTransaction = await GetTransaction(id);
-            var fetchedCategory = await _categoryRepository.GetCategoryByCode(transactionCategorizeCommand.CatCode);
+            var fetchedCategory = await _categoryRepository.GetCategoryByCodeAsync(transactionCategorizeCommand.CatCode);
 
             fetchedTransaction.Catcode = transactionCategorizeCommand.CatCode;
             fetchedTransaction.Category = fetchedCategory;
@@ -53,7 +53,7 @@ namespace asseco_pfm.Services
 
         public async Task<List<Transaction>> GetTransactions()
         {
-            return await _transactionRepository.GetTransactions();
+            return await _transactionRepository.GetTransactionsWithCategoriesAndSplits();
         }
        
         public  void ImportFile(IFormFile file)
@@ -113,7 +113,7 @@ namespace asseco_pfm.Services
 
             foreach (var transactionSplit in splits.Splits)
             {
-                var category = await _categoryRepository.GetCategoryByCode(transactionSplit.CatCode);
+                var category = await _categoryRepository.GetCategoryByCodeAsync(transactionSplit.CatCode);
                 TransactionSplitSingle splitToSave = new TransactionSplitSingle(catCode: category.Code, amount: transactionSplit.Amount, trainsactionId: transaction.Id);
                 transaction.Splits.Add(splitToSave);
             }
