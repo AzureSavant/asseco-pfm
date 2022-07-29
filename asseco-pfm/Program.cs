@@ -22,6 +22,7 @@ namespace asseco_pfm
             builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ITransactionSplitSingleRepository, TransactionSplitSingleRepository>();
+            builder.Services.AddScoped<IAnalyticService, AnalyticService>();
             builder.Services.AddControllers();
 
             // Add database context
