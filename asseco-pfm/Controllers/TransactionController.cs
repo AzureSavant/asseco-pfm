@@ -26,9 +26,9 @@ namespace asseco_pfm.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTransactions([FromQuery] string transactionKind, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] int? page, [FromQuery] int? pageSize, [FromQuery] string sortBy, [FromQuery] SortOrderEnum sortOrder)
+        public IActionResult GetTransactions([FromQuery] string transactionKind, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] string sortBy, [FromQuery] int? page = 1, [FromQuery] int? pageSize  = 10,  [FromQuery] SortOrderEnum sortOrder = SortOrderEnum.asc)
         {
-            var transactionList = await _transactionService.GetTransactions();
+            var transactionList =  _transactionService.GetTransactions(transactionKind, startDate, endDate, sortBy, page, pageSize, sortOrder);
 
             return Ok(transactionList);
         }

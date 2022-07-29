@@ -3,6 +3,8 @@ using asseco_pfm.Database.Repositories;
 using asseco_pfm.DTO;
 using asseco_pfm.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace asseco_pfm.Services
@@ -51,9 +53,11 @@ namespace asseco_pfm.Services
             return await _transactionRepository.GetTransactionById(id);
         }
 
-        public async Task<List<Transaction>> GetTransactions()
+        public  List<Transaction> GetTransactions(string transactionKind, DateTime? startDate, DateTime? endDate, string sortBy, int? page, int? pageSize, SortOrderEnum sortOrder)
         {
-            return await _transactionRepository.GetTransactionsWithCategoriesAndSplits();
+            string buildQuery = BuildQuery(transactionKind, startDate, endDate, sortBy, page, pageSize, sortOrder);
+
+            return  _transactionRepository.GetTransactionsWithCategoriesAndSplits(buildQuery);
         }
        
         public  void ImportFile(IFormFile file)
@@ -142,6 +146,31 @@ namespace asseco_pfm.Services
         {
             return amount >= splitAmount;
         }
+
+        public string BuildQuery(string transactionKind, DateTime? startDate, DateTime? endDate, string sortBy, int? page, int? pageSize, SortOrderEnum sortOrder)
+        {
+            StringBuilder stringBuilder = new StringBuilder("SELECT * FROM transaction ");
+            var expression = $"WHERE \"Kind\" = '{transactionKind}' ";
+            stringBuilder.Append(expression.ToString());
+            if (startDate.HasValue)
+            {
+                expression = $"AND \"Date\" >= '{startDate.Value.ToShortDateString()}' ";
+                stringBuilder.Append(expression);
+            }
+            if (endDate.HasValue)
+            {
+                expression = $"AND \"Date\" <= '{endDate.Value.ToShortDateString()}' ";
+                stringBuilder.Append(expression);
+            }
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                expression = $"ORDER BY \"{sortBy}\" {sortOrder.ToString().ToUpper()} ";
+                stringBuilder.Append(expression);
+            }
+            expression = $"LIMIT {pageSize.ToString()}  OFFSET {((page - 1) * 10).ToString()} ";
+            stringBuilder.Append(expression);
+            return stringBuilder.ToString();
+        } 
 
     }
 }

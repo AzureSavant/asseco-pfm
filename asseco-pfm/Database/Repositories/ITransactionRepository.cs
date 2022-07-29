@@ -10,7 +10,7 @@ namespace asseco_pfm.Database.Repositories
         void DeleteTransactionById(int Id);
         Task<List<Transaction>> GetTransactions();
         bool IsTransactionExist(int Id);
-        Task<List<Transaction>> GetTransactionsWithCategoriesAndSplits();
+        List<Transaction> GetTransactionsWithCategoriesAndSplits(string Query);
         
     }
 }

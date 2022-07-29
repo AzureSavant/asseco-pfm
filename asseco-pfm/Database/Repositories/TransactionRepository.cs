@@ -41,9 +41,11 @@ namespace asseco_pfm.Database.Repositories
             return await _dbContext.Transaction.ToListAsync();
         }
 
-        public async Task<List<Transaction>> GetTransactionsWithCategoriesAndSplits()
+        public List<Transaction> GetTransactionsWithCategoriesAndSplits(string Query)
         {
-            return await _dbContext.Transaction.Include(t=> t.Category).Include(t=> t.Splits).ToListAsync();
+            return _dbContext.Transaction.FromSqlRaw(Query.ToString()).Include(t => t.Category).Include(t => t.Splits).ToList();
+            //return _dbContext.Transaction.FromSqlInterpolated(Query).Include(t => t.Category).Include(t => t.Splits).ToList();
+            //return _dbContext.Transaction.Include(t=> t.Category).Include(t=> t.Splits).ToList();
         }
 
         public  bool IsTransactionExist(int Id)

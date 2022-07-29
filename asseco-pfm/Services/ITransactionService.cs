@@ -8,7 +8,7 @@ namespace asseco_pfm.Services
 {
     public interface ITransactionService
     {
-        Task<List<Transaction>> GetTransactions();
+        List<Transaction> GetTransactions(string transactionKind,  DateTime? startDate,  DateTime? endDate,  string sortBy,  int? page , int? pageSize, SortOrderEnum sortOrder);
         Transaction AddTransaction(Transaction transaction);
         Task<Transaction> GetTransaction(int id);
         void ImportFile(IFormFile file);
