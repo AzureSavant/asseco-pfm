@@ -40,9 +40,9 @@ namespace asseco_pfm.Database.Repositories
             _dbContext.SaveChanges();
         }
 
-        public async Task<List<Category>> GetAllCategories()
+        public async Task<List<Category>> GetAllCategories(String? Query)
         {
-            return await _dbContext.Category.ToListAsync();
+            return await _dbContext.Category.FromSqlRaw(Query).ToListAsync();
         }
 
         public Category GetCategoryByCode(string Code)

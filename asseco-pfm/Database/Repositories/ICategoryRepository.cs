@@ -8,7 +8,7 @@ namespace asseco_pfm.Database.Repositories
         Category GetCategoryByCode(string Code);
         Category AddCategory(Category Category);
         Category UpdateCategory(Category Category);
-        Task<List<Category>> GetAllCategories();
+        Task<List<Category>> GetAllCategories(String? Query);
         void DeleteCategoryByCode(string Code);
         bool IsCategoryExist(string Code);
     }

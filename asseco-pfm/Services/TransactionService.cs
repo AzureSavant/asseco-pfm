@@ -55,8 +55,7 @@ namespace asseco_pfm.Services
 
         public  List<Transaction> GetTransactions(string transactionKind, DateTime? startDate, DateTime? endDate, string sortBy, int? page, int? pageSize, SortOrderEnum sortOrder)
         {
-            string buildQuery = BuildQuery(transactionKind, startDate, endDate, sortBy, page, pageSize, sortOrder);
-
+            string buildQuery = GetTransactionsBuildQuery(transactionKind, startDate, endDate, sortBy, page, pageSize, sortOrder);
             return  _transactionRepository.GetTransactionsWithCategoriesAndSplits(buildQuery);
         }
        
@@ -147,7 +146,7 @@ namespace asseco_pfm.Services
             return amount >= splitAmount;
         }
 
-        public string BuildQuery(string transactionKind, DateTime? startDate, DateTime? endDate, string sortBy, int? page, int? pageSize, SortOrderEnum sortOrder)
+        public string GetTransactionsBuildQuery(string transactionKind, DateTime? startDate, DateTime? endDate, string sortBy, int? page, int? pageSize, SortOrderEnum sortOrder)
         {
             StringBuilder stringBuilder = new StringBuilder("SELECT * FROM transaction ");
             var expression = $"WHERE \"Kind\" = '{transactionKind}' ";

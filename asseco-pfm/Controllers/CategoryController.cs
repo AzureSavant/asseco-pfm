@@ -26,9 +26,9 @@ namespace asseco_pfm.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCategories()
+        public async Task<IActionResult> GetCategories([FromQuery] string? parentId)
         {
-            var result = await _categoryService.GetAllCategories();
+            var result = await _categoryService.GetAllCategories(parentId);
             if (result == null)
                 return BadRequest(result);
            

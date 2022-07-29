@@ -1,4 +1,5 @@
 ﻿using asseco_pfm.Database.Repositories;
+using asseco_pfm.DTO;
 using asseco_pfm.Models;
 using System.Text.RegularExpressions;
 
@@ -18,9 +19,13 @@ namespace asseco_pfm.Services
             return _categoryRepository.AddCategory(category);
         }
 
-        public async Task<List<Category>> GetAllCategories()
+        public async Task<CategoryList> GetAllCategories(string? parentId)
         {
-            return await _categoryRepository.GetAllCategories();
+            string query = BuildQuery(parentId);
+            CategoryList categoryList = new CategoryList();
+            categoryList.Items = await _categoryRepository.GetAllCategories(query);
+            return categoryList;
+
         }
 
         public void ImportFile(IFormFile file)
@@ -46,6 +51,19 @@ namespace asseco_pfm.Services
                     }
                 }
             }
+        }
+
+        public string BuildQuery(string parentId)
+        {
+            string query = "SELECT * FROM category WHERE \"ParentCode\" = ''";
+            if (!string.IsNullOrEmpty(parentId))
+            {
+                var q = $"SELECT * FROM category WHERE \"ParentCode\" = '{parentId}'";
+                query = q.ToString();
+                return query;
+            }
+            else
+                return query;
         }
     }
 }

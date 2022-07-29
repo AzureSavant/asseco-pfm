@@ -1,11 +1,12 @@
-﻿using asseco_pfm.Models;
+﻿using asseco_pfm.DTO;
+using asseco_pfm.Models;
 
 namespace asseco_pfm.Services
 {
     public interface ICategoryService
     {
         Category AddCategory(Category category);
-        Task<List<Category>> GetAllCategories();
+        Task<CategoryList> GetAllCategories(string? parentId);
         void ImportFile(IFormFile file);
     }
 }
