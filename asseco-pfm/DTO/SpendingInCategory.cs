@@ -7,9 +7,9 @@ namespace asseco_pfm.DTO
         [DataMember(Name = "catcode")]
         public string Catcode { get; set; }
         [DataMember(Name = "amount")]
-        public decimal? Amount { get; set; }
+        public decimal Amount { get; set; }
         [DataMember(Name = "count")]
-        public int? Count { get; set; }
+        public int Count { get; set; }
 
         public SpendingInCategory(string? catcode, decimal amount, int count)
         {
