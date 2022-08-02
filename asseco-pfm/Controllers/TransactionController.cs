@@ -1,4 +1,6 @@
 ﻿using asseco_pfm.Commands;
+using asseco_pfm.DTO;
+using asseco_pfm.Models;
 using asseco_pfm.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -26,9 +28,9 @@ namespace asseco_pfm.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetTransactions([FromQuery] string transactionKind, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] string sortBy, [FromQuery] int? page = 1, [FromQuery] int? pageSize  = 10,  [FromQuery] SortOrderEnum sortOrder = SortOrderEnum.asc)
+        public IActionResult GetTransactions([FromQuery] string transactionKind, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] string sortBy, [FromQuery] int page = 1, [FromQuery] int pageSize  = 10,  [FromQuery] SortOrderEnum sortOrder = SortOrderEnum.asc)
         {
-            var transactionList =  _transactionService.GetTransactions(transactionKind, startDate, endDate, sortBy, page, pageSize, sortOrder);
+            TransactionList transactionList =  _transactionService.GetTransactions(transactionKind, startDate, endDate, sortBy, page, pageSize, sortOrder);
 
             return Ok(transactionList);
         }

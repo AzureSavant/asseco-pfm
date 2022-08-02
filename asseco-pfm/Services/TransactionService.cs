@@ -53,10 +53,12 @@ namespace asseco_pfm.Services
             return await _transactionRepository.GetTransactionById(id);
         }
 
-        public  List<Transaction> GetTransactions(string transactionKind, DateTime? startDate, DateTime? endDate, string sortBy, int? page, int? pageSize, SortOrderEnum sortOrder)
+        public  TransactionList GetTransactions(string transactionKind, DateTime? startDate, DateTime? endDate, string sortBy, int page, int pageSize, SortOrderEnum sortOrder)
         {
             string buildQuery = GetTransactionsBuildQuery(transactionKind, startDate, endDate, sortBy, page, pageSize, sortOrder);
-            return  _transactionRepository.GetTransactionsWithCategoriesAndSplits(buildQuery);
+            List<Transaction> transactions = _transactionRepository.GetTransactionsWithCategoriesAndSplits(buildQuery);
+            TransactionList transactionList = new TransactionList(pageSize: pageSize, page: page, totalCount: transactions.Count(), sortBy: sortBy, sortOrder: sortOrder, items: transactions);
+            return transactionList;
         }
        
         public  void ImportFile(IFormFile file)
