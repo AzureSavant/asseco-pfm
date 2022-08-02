@@ -20,25 +20,77 @@ namespace asseco_pfm.Services
         public SpendingsByCategoryDto SpendingByCategory(string catcode,List<Transaction> transactions,List<TransactionSplitSingle> splits)
         {
             
-            SpendingsByCategoryDto spendings = new SpendingsByCategoryDto();
-            decimal amount = 0;
-            int count = 0;
+            SpendingsByCategoryDto spendingsByCategory = new SpendingsByCategoryDto();
             foreach (var transaction in transactions)
             {
-                amount = Decimal.Add(amount,transaction.Amount);
-                count++;
+                decimal amount = 0;
+                int count = 0;
+                SpendingInCategory spendingInCategory = new SpendingInCategory(transaction.Catcode, amount, count);
+
+                if (!spendingsByCategory.Groups.Where(i => i.Catcode.Equals(transaction.Catcode)).Any()) {
+                    foreach (var t in transactions)
+                    {
+                        if (t.Catcode.Equals(spendingInCategory.Catcode))
+                        {
+                            amount = Decimal.Add(amount, t.Amount);
+                            count++;
+                        }
+                    }
+                    spendingInCategory.Amount = amount;
+                    spendingInCategory.Count = count;
+                    spendingsByCategory.Groups.Add(spendingInCategory);
+                }
+                else
+                {
+                    spendingInCategory = spendingsByCategory.Groups.Where(i => i.Catcode.Equals(transaction.Catcode)).First();
+
+                    foreach (var t in transactions)
+                    {
+                        if (t.Catcode.Equals(spendingInCategory.Catcode))
+                        {
+                            spendingInCategory.Amount = Decimal.Add(spendingInCategory.Amount, t.Amount);
+                            spendingInCategory.Count++;
+                        }
+                    }
+                    spendingsByCategory.Groups.Add(spendingInCategory);
+                }
             }
 
             foreach (var split in splits)
             {
-                if (!transactions.Contains(split.Transaction))
+                decimal amount = 0;
+                int count = 0;
+                SpendingInCategory spendingInCategory = new SpendingInCategory(split.CatCode, amount, count);
+
+                if (!spendingsByCategory.Groups.Where(i => i.Catcode.Equals(split.CatCode)).Any())
                 {
-                    amount = Decimal.Add(amount, split.Amount);
-                    count++;
+                    foreach (var s in splits)
+                    {
+                        if (s.CatCode.Equals(spendingInCategory.Catcode))
+                        {
+                            amount = Decimal.Add(amount, s.Amount);
+                            count++;
+                        }
+                    }
+                    spendingInCategory.Amount = amount;
+                    spendingInCategory.Count = count;
+                    spendingsByCategory.Groups.Add(spendingInCategory);
+                }
+                else {
+                    spendingInCategory = spendingsByCategory.Groups.Where(i => i.Catcode.Equals(split.CatCode)).First();
+                    foreach (var s in splits)
+                    {
+                        if (s.CatCode.Equals(spendingInCategory.Catcode))
+                        {
+                            spendingInCategory.Amount = Decimal.Add(spendingInCategory.Amount, s.Amount);
+                            spendingInCategory.Count++;
+                        }
+                    }
+                    spendingsByCategory.Groups.Add(spendingInCategory);
                 }
             }
-            spendings.Groups.Add(new SpendingInCategory(catcode, amount, count));
-            return spendings;
+
+            return spendingsByCategory;
         }
         public SpendingsByCategoryDto SpendingsGet(string catcode, DateTime? startDate, DateTime? endDate, DirectionsEnum direction)
         {
@@ -56,7 +108,7 @@ namespace asseco_pfm.Services
 
             var q = $"LEFT JOIN category AS c ON  t.\"Catcode\" = c.\"Code\"  ";
             stringBuilder.Append(q);
-            q = $"WHERE t.\"Catcode\" = '{catcode}' AND t.\"Direction\" = '{direction}' ";
+            q = $"WHERE t.\"Catcode\" = '{catcode}' AND t.\"Direction\" = '{direction}' OR c.\"ParentCode\" = '{catcode}'";
             stringBuilder.Append(q);
             if (startDate.HasValue)
             {
