@@ -113,12 +113,12 @@ namespace asseco_pfm.Services
             stringBuilder.Append(q);
             if (startDate.HasValue)
             {
-                q = $"AND t.\"Date\" >= {startDate.Value.ToShortDateString()} ";
+                q = $"AND t.\"Date\" >= '{startDate.Value.ToShortDateString()}' ";
                 stringBuilder.Append(q);
             }
             if (endDate.HasValue)
             {
-                q = $"AND t.\"Date\" <= {endDate.Value.ToShortDateString()} ";
+                q = $"AND t.\"Date\" <= '{endDate.Value.ToShortDateString()}' ";
                 stringBuilder.Append(q);
             }
             q = $"ORDER BY t.\"Id\"";
