@@ -75,6 +75,7 @@ namespace asseco_pfm.Services
                     spendingInCategory.Amount = amount;
                     spendingInCategory.Count = count;
                     spendingsByCategory.Groups.Add(spendingInCategory);
+                    
                 }
                 else {
                     spendingInCategory = spendingsByCategory.Groups.Where(i => i.Catcode.Equals(split.CatCode)).First();

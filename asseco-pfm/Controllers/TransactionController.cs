@@ -55,7 +55,7 @@ namespace asseco_pfm.Controllers
                 return BadRequest("x-asee-problems: List [ \"provided - category - does - not - exists\" ]");
             }
 
-            return Ok(result);
+                return Ok();
         }
 
         [HttpPost]
@@ -69,7 +69,7 @@ namespace asseco_pfm.Controllers
                 return BadRequest();
             }
 
-            return Ok(result);
+            return Ok();
         }
     }
 }

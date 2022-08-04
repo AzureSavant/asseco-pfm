@@ -4,11 +4,11 @@ namespace asseco_pfm.DTO
 {
     public class SpendingsByCategoryDto
     {
-        public List<SpendingInCategory> Groups { get; set; }
+        public HashSet<SpendingInCategory> Groups { get; set; }
 
         public SpendingsByCategoryDto()
         {
-            Groups = new List<SpendingInCategory>();
+            Groups = new HashSet<SpendingInCategory>();
         }
     }
 }
